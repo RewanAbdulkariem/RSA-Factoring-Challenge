@@ -1,11 +1,19 @@
 #!/usr/bin/python3
 import sys
 import math
+import signal
+import time
+
+
+def handler(signum, frame):
+    print("Error: Time limit exceeded")
+    sys.exit(1)
+
 
 def factorize_number(n):
     for i in range(2, int(math.sqrt(n)) + 1):
         if n % i == 0:
-            print("{:d}={:d}*{:d}".format(n, i, n // i))
+            print("{:d}={:d}*{:d}".format(n, n // i, i))
             return
     print("{:d}={:d}*{:d}".format(n, n, 1))
 
@@ -27,4 +35,14 @@ if __name__ == "__main__":
         sys.exit(1)
 
     file_path = sys.argv[1]
-    main(file_path)
+
+    signal.signal(signal.SIGALRM, handler)
+    signal.alarm(5)
+    try:
+        start_time = time.time()
+        main(file_path)
+        end_time = time.time()
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        signal.alarm(0)
