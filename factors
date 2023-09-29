@@ -6,11 +6,19 @@ import time
 
 
 def handler(signum, frame):
+    '''
+    Signal handler function.
+    '''
     print("Error: Time limit exceeded")
     sys.exit(1)
 
 
 def factorize_number(n):
+    '''
+    Factorizes a given number into two smaller numbers (non-prime factors).
+    Args:
+        n (int): The number to be factorized.
+    '''
     for i in range(2, int(math.sqrt(n)) + 1):
         if n % i == 0:
             print("{:d}={:d}*{:d}".format(n, n // i, i))
@@ -19,6 +27,13 @@ def factorize_number(n):
 
 
 def main(file_path):
+    '''
+    Reads numbers from a file and factorizes them using factorize_number
+    function.
+    Args:
+        file_path (str): The path to the input file containing numbers
+        to be factorized.
+    '''
     try:
         with open(file_path, "r") as fptr:
             for line in fptr:
