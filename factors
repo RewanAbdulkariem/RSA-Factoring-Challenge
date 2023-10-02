@@ -4,6 +4,8 @@ import math
 import signal
 import time
 
+TIMEOUT_DURATION = 5
+
 
 def handler(signum, frame):
     '''
@@ -19,10 +21,13 @@ def factorize_number(n):
     Args:
         n (int): The number to be factorized.
     '''
-    for i in range(2, int(math.sqrt(n)) + 1):
+    if n % 2 == 0:
+        print("{:d}={:d}*{:d}".format(n, n // 2, 2))
+        return 2
+    for i in range(3, int(math.sqrt(n)) + 1, 2):
         if n % i == 0:
             print("{:d}={:d}*{:d}".format(n, n // i, i))
-            return
+            return i
     print("{:d}={:d}*{:d}".format(n, n, 1))
 
 
@@ -52,7 +57,7 @@ if __name__ == "__main__":
     file_path = sys.argv[1]
 
     signal.signal(signal.SIGALRM, handler)
-    signal.alarm(5)
+    signal.alarm(TIMEOUT_DURATION)
     try:
         start_time = time.time()
         main(file_path)
