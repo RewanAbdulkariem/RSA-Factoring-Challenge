@@ -1,18 +1,79 @@
 #!/usr/bin/python3
-from sys import argv
+'''
+This script reads numbers from a file and factorizes them using a basic method. 
+It prints the factors of each number in the format 'num=factor1*factor2'.
 
-with open(argv[1]) as file:
-    for line in file:
-        num = int(line)
-        print("{:d}=".format(num), end="")
-        if num % 2 == 0:
-            print("{}*2".format(num//2))
-            continue
-        for i in range(3, num, 2):
-            if num % i == 0:
-                factor = num//i
-                for j in range(3, factor, 2):
-                    if factor % j == 0 or i % j == 0:
-                        break
-                print("{}*{}".format(factor, i))
-                break
+Usage: 
+    python script.py input_file.txt
+
+Input file format:
+    One number per line in the input file.
+'''
+
+import sys
+import signal
+import time
+import random
+
+def handler(signum, frame):
+    '''
+    Signal handler function.
+    '''
+    print("Error: Time limit exceeded")
+    sys.exit(1)
+
+
+def is_prime(n):
+    for i in range(2,int(n**0.5)+1):
+        if n%i==0:
+            return False
+    return True
+
+def factorize_number(n):
+    '''
+    Factorizes a given number into two prime numbers.
+    Args:
+        n (int): The number to be factorized.
+    '''
+    for i in range(2, n):
+        if n % i == 0 and is_prime(i) and is_prime(n // i):
+            print("{:d}={:d}*{:d}".format(n, i, n // i))
+            return
+    print("Error: Unable to factorize {:d}".format(n))
+
+
+def main(file_path):
+    '''
+    Reads numbers from a file and factorizes them using factorize_number
+    function.
+    Args:
+        file_path (str): The path to the input file containing numbers
+        to be factorized.
+    '''
+    try:
+        with open(file_path, "r") as fptr:
+            for line in fptr:
+                line = int(line.strip())
+                factorize_number(line)
+    except FileNotFoundError:
+        print(f"Error: can't open file {filename}")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: factors <file>")
+        sys.exit(1)
+
+    file_path = sys.argv[1]
+
+    signal.signal(signal.SIGALRM, handler)
+    signal.alarm(5)
+    try:
+        start_time = time.time()
+        main(file_path)
+        end_time = time.time()
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        signal.alarm(0)
